@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { supabase } from '../client'
+import { deleteCreator, getCreator, updateCreator } from '../api/creators'
 
 export default function EditCreator() {
   const { id } = useParams()
@@ -9,7 +9,7 @@ export default function EditCreator() {
 
   useEffect(() => {
     const fetchCreator = async () => {
-      const { data } = await supabase.from('creators').select('*').eq('id', id).single()
+      const data = await getCreator(id)
       if (data) setForm(data)
     }
     fetchCreator()
@@ -19,15 +19,12 @@ export default function EditCreator() {
 
   const onSave = async (e) => {
     e.preventDefault()
-    await supabase
-      .from('creators')
-      .update({ name: form.name, url: form.url, description: form.description, imageURL: form.imageURL || null })
-      .eq('id', id)
+    await updateCreator(id, { name: form.name, url: form.url, description: form.description, imageURL: form.imageURL || null })
     navigate(`/creator/${id}`)
   }
 
   const onDelete = async () => {
-    await supabase.from('creators').delete().eq('id', id)
+    await deleteCreator(id)
     navigate('/')
   }
 
