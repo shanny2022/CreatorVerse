@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase } from '../client'
 import CreatorCard from '../components/CreatorCard'
+import { getCreators } from '../api/creators'
 
 export default function ShowCreators() {
   const [creators, setCreators] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchCreators = async () => {
-      const { data, error } = await supabase.from('creators').select('*').order('id')
-      if (!error) setCreators(data ?? [])
+      const data = await getCreators()
+      setCreators(data ?? [])
+      setLoading(false)
     }
 
     fetchCreators()
   }, [])
+
+  if (loading) return <p>Loading creators...</p>
 
   if (creators.length === 0) {
     return (

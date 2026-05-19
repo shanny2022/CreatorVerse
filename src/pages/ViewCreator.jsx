@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { supabase } from '../client'
+import { getCreator } from '../api/creators'
 
 export default function ViewCreator() {
   const { id } = useParams()
@@ -8,7 +8,7 @@ export default function ViewCreator() {
 
   useEffect(() => {
     const fetchCreator = async () => {
-      const { data } = await supabase.from('creators').select('*').eq('id', id).single()
+      const data = await getCreator(id)
       setCreator(data)
     }
     fetchCreator()
